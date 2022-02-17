@@ -1,0 +1,2 @@
+rootProject.name = "Final Study Contact Details"
+include ':app'
