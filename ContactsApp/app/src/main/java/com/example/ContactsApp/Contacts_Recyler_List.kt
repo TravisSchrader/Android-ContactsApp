@@ -10,7 +10,7 @@ import com.example.finalstudycontactdetails.R
 
 // need these classes and methods everytime we use a recycler view
 // instance of view for single list item, this must hold the elements which I want to change via my adapter
-class MyListViewHolder(view: View) : RecyclerView.ViewHolder(view){
+class MyListViewHolder(val view: View) : RecyclerView.ViewHolder(view){
     var name: TextView
     var number: TextView
     var editButton: ImageButton
@@ -60,26 +60,30 @@ class MyListAdapter : RecyclerView.Adapter<MyListViewHolder>() {
 
     // takes in a view holder, and then a position for which we want to bind info
     override fun onBindViewHolder(holder: MyListViewHolder, position: Int) {
-        holder.name.text = "Name: ${myContactsList[position][0]}"
-        holder.number.text = "Number: ${myContactsList[position][1]}"
+        holder.apply {
+            val contactName = myContactsList[position][0]
+            val contactNumber = myContactsList[position][1]
 
-        // Setting up all my on click listeners
-        holder.name.setOnClickListener {
-            myListener?.DisplayToast(holder.name.text.toString(), holder.number.text.toString())
+            name.text = "Name: ${contactName}"
+            number.text = "Number: ${contactNumber}"
+
+            name.setOnClickListener {
+                myListener?.DisplayToast(name.text.toString(), number.text.toString())
+            }
+
+            deleteButton.setOnClickListener{
+                myListener?.DisplayToast("Deleting: ${name.text.toString()}", "${number.text.toString()}")
+                myListener?.deleteContact(contactName, contactNumber)
+                myContactsList.removeAt(position)
+                notifyItemRemoved(position)
+                notifyItemRangeChanged(position, myContactsList.size)
+            }
+
+            editButton.setOnClickListener {
+                myListener?.DisplayToast("Editing: ${name.text.toString()}", "${number.text.toString()}")
+                myListener?.openEdit(contactName, contactNumber, position)
+            }
         }
-
-        holder.deleteButton.setOnClickListener {
-            myListener?.DisplayToast("Deleting: ${holder.name.text.toString()}", "${holder.number.text.toString()}")
-            myListener?.deleteContact(myContactsList[position][0], myContactsList[position][1])
-            myContactsList.removeAt(position)
-            this.notifyDataSetChanged()
-        }
-
-        holder.editButton.setOnClickListener {
-            myListener?.DisplayToast("Editing: ${holder.name.text.toString()}", "${holder.number.text.toString()}")
-            myListener?.openEdit(myContactsList[position][0], myContactsList[position][1], position)
-        }
-
     }
 
 
@@ -87,6 +91,7 @@ class MyListAdapter : RecyclerView.Adapter<MyListViewHolder>() {
     fun addContact(newContact: List<String>){
         myContactsList.add(newContact)
         this.notifyDataSetChanged()
+
     }
 
 
