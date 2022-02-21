@@ -14,11 +14,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.finalstudycontactdetails.R
 import com.example.finalstudycontactdetails.add_contact_info
+import com.example.finalstudycontactdetails.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity(), add_contact_info.contactInfoListener,
     MyListAdapter.listElementListener {
 
     companion object{
+        private var binding: ActivityMainBinding? = null
         lateinit var myDB: DatabaseManager
         lateinit var addContact: Button
         lateinit var myRecyclerList: RecyclerView
@@ -28,7 +30,11 @@ class MainActivity : AppCompatActivity(), add_contact_info.contactInfoListener,
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+
+        // initialize the binding, this ensures it will not be null
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding?.root)
+
 
         // setting the title
         this.title = "Contacts"
@@ -39,17 +45,12 @@ class MainActivity : AppCompatActivity(), add_contact_info.contactInfoListener,
         // test persistence of contacts
         var contactCursor = myDB.writableDatabase.rawQuery("SELECT * FROM CONTACTS", null)
 
-//        // when opening contacts, load all the contacts in the DB to the list which will then be set at the recycler view list
-//        while(contactCursor.moveToNext()){
-//            myContacts.add(listOf(contactCursor.getString(0), contactCursor.getString(1)))
-//        }
-
         // set up addContact Button
-        addContact = findViewById(R.id.addContact)
+        addContact = binding!!.addContact
 
 
         // set up list
-        myRecyclerList = findViewById(R.id.ContactList)
+        myRecyclerList = binding!!.ContactList
         myListAdapter = MyListAdapter() // initialize adapter for list
         myListAdapter.myListener = this
         myRecyclerList.layoutManager = LinearLayoutManager(this)
@@ -83,7 +84,7 @@ class MainActivity : AppCompatActivity(), add_contact_info.contactInfoListener,
         myListAdapter.setList(myContacts)
 
         // setting up a contact listener
-        addContact.setOnClickListener {
+        binding!!.addContact.setOnClickListener {
             var myFrag = add_contact_info()
             myFrag.contactListener = this
 
@@ -99,6 +100,13 @@ class MainActivity : AppCompatActivity(), add_contact_info.contactInfoListener,
         }
         super.onSaveInstanceState(outState)
     }
+
+    // null out the binding on destroy
+    override fun onDestroy() {
+        binding = null
+        super.onDestroy()
+    }
+
 
     // implementing listener method for the add_contact_info fragment
     override fun submitContact(name: String, number: String) {
