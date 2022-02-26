@@ -45,4 +45,16 @@ class DatabaseManager(context: Context): SQLiteOpenHelper(context, "MyDB", null,
         return result
 
     }
+
+    companion object {
+        private var instance: DatabaseManager? = null
+        fun getInstance(context: Context): DatabaseManager{
+            if(instance == null){
+                instance = DatabaseManager(context)
+            }
+
+            return instance!!
+        }
+
+    }
 }

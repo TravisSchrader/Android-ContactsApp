@@ -40,7 +40,7 @@ class MainActivity : AppCompatActivity(), add_contact_info.contactInfoListener,
         this.title = "Contacts"
 
         // grab DB
-        myDB = DatabaseManager(this)
+        myDB = DatabaseManager.getInstance(this)
 
         // test persistence of contacts
         var contactCursor = myDB.writableDatabase.rawQuery("SELECT * FROM CONTACTS", null)
