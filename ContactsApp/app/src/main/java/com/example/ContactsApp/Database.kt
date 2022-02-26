@@ -6,7 +6,7 @@ import android.database.sqlite.SQLiteOpenHelper
 
 // for all DB stuff this class needs to be made
 // create a class which is a sub class of SQLiteHelper, the SQLite helper takes in the context, the name of the db, factory, and which version
-class DatabaseManager(context: Context): SQLiteOpenHelper(context, "MyDB", null, 1){
+class DatabaseManager private constructor(context: Context): SQLiteOpenHelper(context, "MyDB", null, 1){
 
     // create the database, in here create the table which I will be using
     override fun onCreate(db: SQLiteDatabase?) {
